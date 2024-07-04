@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .top-bar {
+            width: 100%;
+            background: #11101D;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+
+        }
+
+
+
+        .top-bar .icons {
+            display: flex;
+            align-items: center;
+        }
+
+        .icons {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        .top-bar .icons i {
+            font-size: 20px;
+
+            cursor: pointer;
+            position: relative;
+            text-align: right;
+        }
+
+        .top-bar .icons i .dot {
+            height: 8px;
+            width: 8px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .profile {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-left: 20px;
+            margin-right: 50px;
+        }
+
+        .profile img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .dropdown {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            width: 400px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            right: 20px;
+            top: 60px;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .dropdown .close-btn {
+            text-align: right;
+            padding: 10px;
+            cursor: pointer;
+            color: black;
+        }
+
+        .dropdown .close-btn:hover {
+            background-color: #ddd;
+        }
+
+        .dropdown a {
+            color: black;
+            padding: 25px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
+
+        .lineb {
+            border-bottom: solid #ccc 1px;
+            width: 90%;
+            margin: auto;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            width: 140px;
+            height: 100%;
+            background: #11101D;
+            transition: width 300ms;
+
+        }
+
+        .sidebar:hover {
+            width: 240px;
+        }
+
+        .logo-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+           .logo img{
+            color: white;
+            display: flex;
+            align-items: center;
+            width: 100px;
+            height:100px;
+        }
+
+        .logo i {
+            font-size: 28px;
+        }
+
+        .logo .logo-name {
+            font-size: 20px;
+            font-weight: 400;
+            margin-left: 20px;
+            opacity: 0;
+            transition: opacity 300ms;
+        }
+
+        .sidebar:hover .logo .logo-name {
+            opacity: 1;
+        }
+
+        #btn {
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .nav-list {
+            margin-top: 2em;
+        }
+
+        .nav-list li {
+            position: relative;
+            list-style: none;
+            width: 100%;
+        }
+
+        .nav-list li a {
+            display: flex;
+            align-items: center;
+            height: 90px;
+            text-decoration: none;
+            color: white;
+
+            transition: background 300ms;
+        }
+
+        .nav-list li a:hover {
+            background: #7EC8E3;
+            color: white;
+
+        }
+
+
+        .nav-list li i {
+            min-width: 60px;
+            text-align: center;
+            font-size: 20px;
+            color: #fff;
+
+        }
+
+        .nav-list li .links-name {
+            font-size: 15px;
+            font-weight: 400;
+            margin-left: 10px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 300ms;
+        }
+
+        .sidebar:hover .nav-list li .links-name {
+            opacity: 1;
+            pointer-events: auto;
+
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 7em;
+            margin-left: 8em;
+        }
+
+        .dashboard>div {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .indicator h2 {
+            margin: 0;
+        }
+
+        .indicator .percentage {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .indicator .value {
+            font-size: 18px;
+            color: #888;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chart-container canvas {
+            width: 100%;
+            height: 300px;
+        }
+
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .filter-container select,
+        .filter-container button {
+            padding: 10px;
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .filter-container button i {
+            margin-right: 5px;
+        }
+
+        .pending-payments {
+            margin-bottom: 20px;
+        }
+
+        .pending-payments h2,
+        .transactions h2 {
+            margin-bottom: 10px;
+        }
+
+        .payment-list,
+        .transaction-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .payment-item,
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .payment-item:last-child,
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .payment-item button,
+        .transaction-item button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .payment-item button:hover,
+        .transaction-item button:hover {
+            background: #0056b3;
+        }
+
+        .transactions {
+            width: 80%;
+            background-color: #fff;
+            padding: 50px;
+            margin-top: 3em;
+            margin-left: 9em;
+            margin-bottom: 3em;
+        }
+
+        .search-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .search-bar input {
+            padding: 10px;
+            font-size: 16px;
+            width: 80%;
+        }
+
+        .search-bar button {
+            padding: 10px;
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .search-bar button:hover {
+            background: #0056b3;
+        }
+
+        .transaction-status {
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .transaction-status.pending {
+            background: #f39c12;
+        }
+
+        .transaction-status.declined {
+            background: #e74c3c;
+        }
+
+        .transaction-status.received {
+            background: #2ecc71;
+        }
+
+        .select-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .select-container select {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .transaction-select {
+            display: flex;
+            align-items: center;
+        }
+
+        .transaction-select input {
+            margin-right: 5px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .pagination button {
+            padding: 5px 10px;
+            margin: 2px;
+            border: none;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .pagination button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+
+        <div class="icons">
+            <div class="notification">
+                <i class="fas fa-bell">
+                    <div class="dot"></div>
+                </i>
+                <div class="dropdown">
+                    <div class="close-btn">&times;</div>
+                    <a href="#">Notification 1</a>
+                    <div class="lineb"></div>
+                    <a href="#">Notification 2</a>
+                    <div class="lineb"></div>
+                    <a href="#">Notification 3</a>
+                </div>
+            </div>
+            <div class="profile">
+                <img src="https://via.placeholder.com/40" alt="Profile Image">
+            </div>
+        </div>
+    </div>
+    <div class="sidebar">
+        <div class="logo-content">
+            <div class="logo">
+                <img src="logo.png">
+                <div class="logo-name">Logoipsum</div>
+            </div>
+
+        </div>
+        <ul class="nav-list">
+            <li>
+                <a href="dash.html">
+                    <i class="fas fa-th"></i>
+                    <span class="links-name">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="links-name">Profit & Loss</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="transport.html">
+                    <i class="fas fa-truck"></i>
+                    <span class="links-name active">Transport </span>
+                </a>
+            </li>
+            <li>
+                <a href="inventorymanagment.html">
+                    <i class="fas fa-boxes"></i>
+                    <span class="links-name">Inventory </span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span class="links-name">Taxes</span>
+                </a>
+            </li>
+            <li>
+                <a href="payroll.html">
+                    <i class="fas fa-file-invoice"></i>
+                    <span class="links-name">Payroll</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fas fa-cog"></i>
+                    <span class="links-name">Settings</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="links-name">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="dashboard">
+        <!-- Revenue Change Indicator -->
+        <div class="indicator">
+            <div class="percentage" style="color: green;">⬆ 24.48%</div>
+            <h2>Revenue</h2>
+            <div class="value">$65.54K This Month</div>
+            <div class="value">$51.25K Last Month</div>
+        </div>
+        <!-- Expense Change Indicator -->
+        <div class="indicator">
+            <div class="percentage" style="color: red;">⬇ 28.74%</div>
+            <h2>Expenses</h2>
+            <div class="value">$2.59K This Month</div>
+            <div class="value">$9.02K Last Month</div>
+        </div>
+        <!-- Outstanding Revenue -->
+        <div class="indicator">
+            <h2>Outstanding Revenue</h2>
+            <div class="value" style="font-size: 24px;">$207,226</div>
+        </div>
+        <!-- Gross Profit Margin Bar Chart -->
+        <div>
+            <div class="filter-container">
+                <select id="grossProfitFilter">
+                    <option value="hour">Hour</option>
+                    <option value="day">Day</option>
+                    <option value="month">Month</option>
+                    <option value="year" selected>Year</option>
+                </select>
+            </div>
+            <h2>Gross Profit Margin</h2>
+            <canvas id="grossProfitChart"></canvas>
+        </div>
+        <!-- Net Profit Margin Bar Chart -->
+        <div>
+            <div class="filter-container">
+                <select id="netProfitFilter">
+                    <option value="hour">Hour</option>
+                    <option value="day">Day</option>
+                    <option value="month">Month</option>
+                    <option value="year" selected>Year</option>
+                </select>
+            </div>
+            <h2>Net Profit Margin</h2>
+            <canvas id="netProfitChart"></canvas>
+        </div>
+        <!-- Payment Status Pie Chart -->
+        <div>
+            <h2>Payment Status</h2>
+            <div class="chart-container">
+                <canvas id="paymentStatusChart"></canvas>
+            </div>
+        </div>
+        <!-- Top 5 Expenses by Category Pie Chart -->
+        <div>
+            <h2>Top 5 Expenses by Category</h2>
+            <div class="chart-container">
+                <canvas id="expensesChart"></canvas>
+            </div>
+        </div>
+        <!-- Revenue Trend Line Chart -->
+        <div>
+            <h2>Revenue Trend</h2>
+            <div class="chart-container">
+                <canvas id="revenueTrendChart"></canvas>
+            </div>
+        </div>
+        <!-- Pending Payments List -->
+        <div class="pending-payments">
+            <h2>Pending Payments</h2>
+            <ul class="payment-list" id="pendingPaymentsList">
+                <!-- Pending payments will be dynamically inserted here -->
+            </ul>
+        </div>
+    </div>
+
+    <div class="transactions">
+        <h2>Transactions</h2>
+        <div class="filter-container">
+            <button id="addTransaction"><i class="fas fa-plus"></i> Add Transaction</button>
+            <button id="filterIncome"><i class="fas fa-filter"></i> Income</button>
+            <button id="filterExpenses"><i class="fas fa-filter"></i> Expenses</button>
+            <button id="filterDate"><i class="fas fa-calendar-alt"></i> Date</button>
+        </div>
+        <div class="select-container">
+            <button id="selectAllInvoices">Select All</button>
+
+        </div>
+        <div class="search-bar">
+            <input type="text" id="searchTransactions" placeholder="Search transactions...">
+            <button id="searchButton">Search</button>
+        </div>
+        <ul class="transaction-list" id="transactionList">
+            <!-- Transactions will be dynamically inserted here -->
+        </ul>
+        <div class="pagination" id="pagination">
+            <!-- Pagination controls will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+   const grossProfitData = {
+    hour: [15, 17, 16, 14, 18],
+    day: [60, 65, 63, 59, 66],
+    month: [300, 310, 320, 305, 315],
+    year: [1200, 1250, 1300, 1230, 1280]
+};
+
+const netProfitData = {
+    hour: [10, 12, 11, 9, 13],
+    day: [45, 50, 48, 44, 51],
+    month: [200, 210, 215, 205, 220],
+    year: [900, 950, 1000, 930, 970]
+};
+
+const ctxGrossProfit = document.getElementById('grossProfitChart').getContext('2d');
+const ctxNetProfit = document.getElementById('netProfitChart').getContext('2d');
+
+const grossProfitChart = new Chart(ctxGrossProfit, {
+    type: 'bar',
+    data: {
+        labels: ['Metric 1', 'Metric 2', 'Metric 3', 'Metric 4', 'Metric 5'],
+        datasets: [{
+            label: 'Gross Profit (%)',
+            data: grossProfitData.year,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+const netProfitChart = new Chart(ctxNetProfit, {
+    type: 'bar',
+    data: {
+        labels: ['Metric 1', 'Metric 2', 'Metric 3', 'Metric 4', 'Metric 5'],
+        datasets: [{
+            label: 'Net Profit (%)',
+            data: netProfitData.year,
+            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+            borderColor: 'rgba(153, 102, 255, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+document.getElementById('grossProfitFilter').addEventListener('change', function() {
+    const period = this.value;
+    grossProfitChart.data.datasets[0].data = grossProfitData[period];
+    grossProfitChart.update();
+});
+
+document.getElementById('netProfitFilter').addEventListener('change', function() {
+    const period = this.value;
+    netProfitChart.data.datasets[0].data = netProfitData[period];
+    netProfitChart.update();
+});
+
+// Payment Status Pie Chart
+const paymentStatusCtx = document.getElementById('paymentStatusChart').getContext('2d');
+new Chart(paymentStatusCtx, {
+    type: 'pie',
+    data: {
+        labels: ['Partial', 'Unpaid', 'Paid'],
+        datasets: [{
+            data: [29.27, 39.02, 31.71],
+            backgroundColor: ['#FF6347', '#FF0000', '#FFA500']
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                position: 'top'
+            }
+        }
+    }
+});
+
+// Top 5 Expenses by Category Pie Chart
+const expensesCtx = document.getElementById('expensesChart').getContext('2d');
+new Chart(expensesCtx, {
+    type: 'pie',
+    data: {
+        labels: ['Rent or Lease', 'Advertising', 'Education and Training', 'Contractors', 'Airfare'],
+        datasets: [{
+            data: [16.96, 18.15, 24.22, 20.96, 19.71],
+            backgroundColor: ['#FFA500', '#FF4500', '#FF69B4', '#FF6347', '#FFD700']
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                position: 'top'
+            }
+        }
+    }
+});
+
+// Revenue Trend Line Chart
+const revenueTrendCtx = document.getElementById('revenueTrendChart').getContext('2d');
+new Chart(revenueTrendCtx, {
+    type: 'line',
+    data: {
+        labels: ['Oct 2022', 'Nov 2022', 'Dec 2022', 'Jan 2023', 'Feb 2023', 'Mar 2023'],
+        datasets: [{
+            label: 'Revenue',
+            data: [63230, 57700, 49670, 32770, 65390, 51250],
+            borderColor: '#FFD700',
+            backgroundColor: 'rgba(255, 215, 0, 0.2)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            x: {
+                display: true
+            },
+            y: {
+                display: true,
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+// Pending Payments
+const pendingPayments = [
+    { name: 'Company A', amount: '$500', phone: '123-456-7890', email: 'companya@example.com' },
+    { name: 'Individual B', amount: '$200', phone: '123-456-7891', email: 'individualb@example.com' },
+    { name: 'Company C', amount: '$800', phone: '123-456-7892', email: 'companyc@example.com' },
+];
+
+const pendingPaymentsList = document.getElementById('pendingPaymentsList');
+
+pendingPayments.forEach(payment => {
+    const listItem = document.createElement('li');
+    listItem.classList.add('payment-item');
+    listItem.innerHTML = `
+        <span>${payment.name} - ${payment.amount}</span>
+        <button onclick="requestPayment('${payment.phone}', '${payment.email}')">Request Payment</button>
+    `;
+    pendingPaymentsList.appendChild(listItem);
+});
+
+function requestPayment(phone, email) {
+    alert(`Payment request sent to phone: ${phone} and email: ${email}`);
+}
+
+// Transactions
+const transactions = [
+    { name: 'Company A', product: 'Product 1', invoice: 'INV-001', total: '$500', status: 'pending', pdf: 'invoice1.pdf', date: '2023-06-01 10:00' },
+    { name: 'Individual B', product: 'Product 2', invoice: 'INV-002', total: '$200', status: 'declined', pdf: 'invoice2.pdf', date: '2023-06-02 12:30' },
+    { name: 'Company C', product: 'Product 3', invoice: 'INV-003', total: '$800', status: 'received', pdf: 'invoice3.pdf', date: '2023-06-03 09:15' },
+    { name: 'Company D', product: 'Product 4', invoice: 'INV-004', total: '$300', status: 'expenses', pdf: 'invoice4.pdf', date: '2023-06-04 14:45' },
+    { name: 'Company E', product: 'Product 5', invoice: 'INV-005', total: '$600', status: 'expenses', pdf: 'invoice5.pdf', date: '2023-06-05 11:30' },
+    // Add more transactions as needed
+];
+
+const transactionList = document.getElementById('transactionList');
+const itemsPerPage = 16;
+let currentPage = 1;
+
+function displayTransactions(transactions, page = 1) {
+    transactionList.innerHTML = '';
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const paginatedTransactions = transactions.slice(start, end);
+
+    paginatedTransactions.forEach(transaction => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('transaction-item');
+        listItem.innerHTML = `
+            <div class="transaction-select">
+                <input type="checkbox" class="select-transaction">
+            </div>
+            <span>${transaction.name} - ${transaction.product}</span>
+            <span>${transaction.invoice}</span>
+            <span>${transaction.total}</span>
+            <span>${transaction.date}</span>
+            <span class="transaction-status ${transaction.status}">${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}</span>
+            <button onclick="downloadInvoice('${transaction.pdf}')"><i class="fas fa-download"></i></button>
+        `;
+        transactionList.appendChild(listItem);
+    });
+}
+
+function downloadInvoice(pdf) {
+    alert(`Downloading ${pdf}`);
+}
+
+displayTransactions(transactions);
+
+document.getElementById('filterIncome').addEventListener('click', function() {
+    const filteredTransactions = transactions.filter(transaction => transaction.status === 'pending' || transaction.status === 'received' || transaction.status === 'declined');
+    displayTransactions(filteredTransactions, 1);
+    updatePagination(filteredTransactions);
+});
+
+document.getElementById('filterExpenses').addEventListener('click', function() {
+    const filteredTransactions = transactions.filter(transaction => transaction.status === 'expenses');
+    displayTransactions(filteredTransactions, 1);
+    updatePagination(filteredTransactions);
+});
+
+document.getElementById('filterDate').addEventListener('click', function() {
+    // Add your date filter logic here
+});
+
+document.getElementById('addTransaction').addEventListener('click', function() {
+    // Add your add transaction logic here
+});
+
+document.getElementById('searchButton').addEventListener('click', function() {
+    const searchTerm = document.getElementById('searchTransactions').value.toLowerCase();
+    const filteredTransactions = transactions.filter(transaction => 
+        transaction.name.toLowerCase().includes(searchTerm) ||
+        transaction.product.toLowerCase().includes(searchTerm) ||
+        transaction.invoice.toLowerCase().includes(searchTerm)
+    );
+    displayTransactions(filteredTransactions, 1);
+    updatePagination(filteredTransactions);
+});
+
+document.getElementById('selectAllInvoices').addEventListener('click', function() {
+    document.querySelectorAll('.select-transaction').forEach(checkbox => checkbox.checked = true);
+});
+
+document.getElementById('downloadSelectedInvoices').addEventListener('click', function() {
+    const selectedTransactions = document.querySelectorAll('.select-transaction:checked');
+    selectedTransactions.forEach(transaction => {
+        const pdf = transaction.closest('.transaction-item').querySelector('button').getAttribute('onclick').split("'")[1];
+        downloadInvoice(pdf);
+    });
+});
+
+document.getElementById('printSelectedInvoices').addEventListener('click', function() {
+    // Add your print logic here
+});
+
+// Pagination controls
+function updatePagination(transactions) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    const totalPages = Math.ceil(transactions.length / itemsPerPage);
+    if (currentPage > 1) {
+        const prevButton = document.createElement('button');
+        prevButton.textContent = 'Previous';
+        prevButton.addEventListener('click', () => {
+            currentPage--;
+            displayTransactions(transactions, currentPage);
+            updatePagination(transactions);
+        });
+        pagination.appendChild(prevButton);
+    }
+
+    for (let i = 1; i <= totalPages; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.textContent = i;
+        if (i === currentPage) {
+            pageButton.style.fontWeight = 'bold';
+        }
+        pageButton.addEventListener('click', () => {
+            currentPage = i;
+            displayTransactions(transactions, currentPage);
+            updatePagination(transactions);
+        });
+        pagination.appendChild(pageButton);
+    }
+
+    if (currentPage < totalPages) {
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Next';
+        nextButton.addEventListener('click', () => {
+            currentPage++;
+            displayTransactions(transactions, currentPage);
+            updatePagination(transactions);
+        });
+        pagination.appendChild(nextButton);
+    }
+}
+
+// Initial pagination setup
+updatePagination(transactions);
+
+function login() {
+    const employeeID = document.getElementById('employeeID').value;
+    const password = document.getElementById('password').value;
+
+    if (employeeID === 'Example123' && password === '1234') {
+        document.querySelector('.login-container').style.display = 'none';
+        document.querySelector('.dashboard-container').style.display = 'block';
+    } else {
+        alert('Invalid Employee ID or Password');
+    }
+}
+    </script>

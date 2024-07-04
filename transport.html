@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Tracking Dashboard</title>
+    <link rel="stylesheet" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: auto;
+            font-family: Arial, sans-serif;
+            
+        }
+
+         .top-bar {
+            width: 100%;
+            background: #11101D;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+
+        }
+
+       
+
+        .top-bar .icons {
+            display: flex;
+            align-items: center;
+        }
+        .icons{
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        .top-bar .icons i {
+            font-size: 20px;
+            
+            cursor: pointer;
+            position: relative;
+            text-align: right;
+        }
+
+        .top-bar .icons i .dot {
+            height: 8px;
+            width: 8px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .profile {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-left: 20px;
+             margin-right:50px ;
+        }
+
+        .profile img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .dropdown {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+           width: 400px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            right: 20px;
+            top: 60px;
+          border-radius:0 0 15px 15px;
+        }
+
+        .dropdown .close-btn {
+            text-align: right;
+            padding: 10px;
+            cursor: pointer;
+          color:black;
+        }
+
+        .dropdown .close-btn:hover {
+            background-color: #ddd;
+        }
+
+        .dropdown a {
+            color: black;
+            padding: 25px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
+      .lineb{
+        border-bottom:solid #ccc 1px;
+        width:90%;
+        margin:auto;
+      }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            width: 140px;
+            height: 100%;
+            background: #11101D;
+            transition: width 300ms;
+            
+        }
+
+        .sidebar:hover {
+            width: 240px;
+        }
+
+        .logo-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+         .logo img{
+            color: white;
+            display: flex;
+            align-items: center;
+            width: 100px;
+            height:100px;
+        }
+
+        .logo i {
+            font-size: 28px;
+        }
+
+        .logo .logo-name {
+            font-size: 20px;
+            font-weight: 400;
+            margin-left: 20px;
+            opacity: 0;
+            transition: opacity 300ms;
+        }
+
+        .sidebar:hover .logo .logo-name {
+            opacity: 1;
+        }
+
+        #btn {
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .nav-list {
+            margin-top: 2em;
+        }
+
+        .nav-list li {
+            position: relative;
+            list-style: none;
+            width: 100%;
+        }
+
+        .nav-list li a {
+            display: flex;
+            align-items: center;
+            height: 90px;
+            text-decoration: none;
+            color: white;
+
+            transition: background 300ms;
+        }
+
+        .nav-list li a:hover {
+            background: #1d1b31;
+        }
+
+        .nav-list li i {
+            min-width: 60px;
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .nav-list li .links-name {
+            font-size: 15px;
+            font-weight: 400;
+            margin-left: 10px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 300ms;
+        }
+
+        .sidebar:hover .nav-list li .links-name {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .tit{
+            margin-top:4em;
+        }
+
+        .content {
+            margin-left: 140px;
+            padding: 20px;
+            
+            
+        }
+
+        .map-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 10px;
+margin-top: 2em;
+        }
+
+        .map {
+            width: 32%;
+            height: 300px;
+            border: 1px solid #ccc;
+            z-index: -1;
+
+        }
+
+        .info-container {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+
+        }
+
+        .info {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 40px;
+            width: 32%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            margin: 0 5px;
+            border-radius: 20px;
+
+
+        }
+
+        .line {
+            height: 20px;
+            border-bottom: solid #ccc 2px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        
+        <div class="icons">
+            <div class="notification">
+                <i class="fas fa-bell">
+                    <div class="dot"></div>
+                </i>
+                <div class="dropdown">
+                    <div class="close-btn">&times;</div>
+                    <a href="#">Notification 1</a>
+                  <div class="lineb"></div>
+                    <a href="#">Notification 2</a>
+                  <div class="lineb"></div>
+                    <a href="#">Notification 3</a>
+                </div>
+            </div>
+            <div class="profile">
+                <img src="https://via.placeholder.com/40" alt="Profile Image">
+            </div>
+        </div>
+    </div>
+    <div class="sidebar">
+        <div class="logo-content">
+            <div class="logo">
+            <img src="logo.png">
+                <div class="logo-name">Logoipsum</div>
+            </div>
+
+        </div>
+        <ul class="nav-list">
+            <li>
+                <a href="dash.html">
+                    <i class="fas fa-th"></i>
+                    <span class="links-name">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="PL.html">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="links-name">Profit & Loss</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="#">
+                    <i class="fas fa-truck"></i>
+                    <span class="links-name active">Transport </span>
+                </a>
+            </li>
+            <li>
+                <a href="inventorymanagment.html">
+                    <i class="fas fa-boxes"></i>
+                    <span class="links-name">Inventory </span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span class="links-name">Taxes</span>
+                </a>
+            </li>
+            <li>
+                <a href="payroll.html">
+                    <i class="fas fa-file-invoice"></i>
+                    <span class="links-name">Payroll</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="#">
+                    <i class="fas fa-cog"></i>
+                    <span class="links-name">Settings</span>
+                </a>
+            </li>
+           
+            <li>
+                <a href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="links-name">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+   
+    <div class="content">
+        <div class="tit">
+            <h2>Transport Managment</h2>
+        </div>
+        <div class="map-container">
+            <div id="map1" class="map"></div>
+            <div id="map2" class="map"></div>
+            <div id="map3" class="map"></div>
+        </div>
+        <div class="info-container">
+            <div id="info1" class="info"></div>
+            <div id="info2" class="info"></div>
+            <div id="info3" class="info"></div>
+        </div>
+    </div>
+
+
+
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+    <script>
+
+          document.querySelector('.notification i').addEventListener('click', function () {
+                const dropdown = document.querySelector('.dropdown');
+                dropdown.classList.toggle('show');
+            });
+
+            document.querySelector('.close-btn').addEventListener('click', function () {
+                const dropdown = document.querySelector('.dropdown');
+                dropdown.classList.remove('show');
+            });
+
+            // Close the dropdown if the user clicks outside of it
+            window.onclick = function (event) {
+                if (!event.target.matches('.notification i, .notification i *, .dropdown, .dropdown *')) {
+                    const dropdown = document.querySelector('.dropdown');
+                    if (dropdown.classList.contains('show')) {
+                        dropdown.classList.remove('show');
+                    }
+                }
+            }
+        function initMaps() {
+            const platform = new H.service.Platform({
+                apikey: 'YOUR_HERE_API_KEY'
+            });
+            const defaultLayers = platform.createDefaultLayers();
+
+            const maps = [
+                { elementId: 'map1', infoId: 'info1', lat: 51.505, lng: -0.09, driver: 'Joe', plate: 'XYZ123', destination: 'Lusaka', km: '25km', speed: '60 km/h', Phone: '+260 87673827' },
+                { elementId: 'map2', infoId: 'info2', lat: 48.8566, lng: 2.3522, driver: 'Anna', plate: 'ABC456', destination: 'Cape Town', km: '30km', speed: '55 km/h', Phone: '+260 87673827' },
+                { elementId: 'map3', infoId: 'info3', lat: 52.5200, lng: 13.4050, driver: 'Mike', plate: 'DEF789', destination: 'Nairobi', km: '45km', speed: '65 km/h', Phone: '+260 87673827' }
+            ];
+
+            maps.forEach(function (detail) {
+                const mapContainer = document.getElementById(detail.elementId);
+                const map = new H.Map(
+                    mapContainer,
+                    defaultLayers.vector.normal.map,
+                    {
+                        zoom: 12,
+                        center: { lat: detail.lat, lng: detail.lng }
+                    }
+                );
+
+                // Enable the event system on the map instance:
+                const mapEvents = new H.mapevents.MapEvents(map);
+                new H.mapevents.Behavior(mapEvents);
+
+                // Create the default UI components, including zoom controls and a scale bar:
+                const ui = H.ui.UI.createDefault(map, defaultLayers, 'en-US');
+
+                // Add a marker for the driver's current location
+                const marker = new H.map.Marker({ lat: detail.lat, lng: detail.lng });
+                map.addObject(marker);
+
+                // Set the content of the info boxes to display the details about the driver and vehicle
+                const infoBox = document.getElementById(detail.infoId);
+                infoBox.innerHTML = `
+                <div>Driver's Name: ${detail.driver}</div>
+                <div class="line"></div>
+                <div>Plate Number: ${detail.plate}</div>
+                <div class="line"></div>
+                <div>Destination: ${detail.destination}</div>
+                <div class="line"></div>
+                <div>KM to Destination: ${detail.km}</div>
+                <div class="line"></div>
+                <div>Speed: ${detail.speed}</div>
+                <div class="line"></div>
+                <div>Phone Number: ${detail.Phone}</div>
+            `;
+            });
+        }
+
+
+        window.onload = initMaps;
+
+        document.getElementById('btn').addEventListener('click', function () {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+        });
+
+    </script>
